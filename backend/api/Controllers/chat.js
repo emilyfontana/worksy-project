@@ -1,2 +1,0 @@
-//criar conversa
-// listar conversa

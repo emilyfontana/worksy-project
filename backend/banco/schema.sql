@@ -14,10 +14,13 @@ USE worksy;
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    tipo ENUM('empresa','freelancer') NOT NULL
+    email VARCHAR(150) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    tipo ENUM('freelancer','empresa') NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- nao diferenciar empresa e freelancer, pois ambos podem iniciar conversas e enviar mensagens então serve p os dois tipos de user 
+
 
 CREATE TABLE conversas (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -49,3 +52,43 @@ CREATE TABLE mensagens (
     FOREIGN KEY (remetente_id)
     REFERENCES usuarios(id)
 );
+
+
+--- create table d evagas é preciso que o user aplique a uma vaga para realziar o chat 
+CREATE TABLE vagas (
+
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(30) NOT NULL, 
+    descrição VARCHAR(100) NOT NULL,
+    empresa_id INT NOT NULL, 
+    salario DECIMAL(10,2),
+    modalidade ENUM('Remoto','Presencial','Hibrido'),
+    status ENUM('Aberta','Fechada') DEFAULT 'Aberta',
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (empresa_id)
+    REFERENCES (usuarios_id)
+
+
+);
+--- create table candidaturas após a abertura da vaga de candidatar 
+
+CREATE TABLE candidaturas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    vagas_id INT NOT NULL, 
+    freelancer_id INT NOT NULL,
+    tipo ENUM('aprovado','pendente', 'rejeitado',)  DEFAULT 'Pendente',
+    data_candidatura TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (freelancer_id)
+    REFERENCES (usuario_id),
+-- infos do frelancer 
+
+-- infos da vaga
+    FOREIGN KEY(vaga_id)
+    REFERENCES vagas(id)
+
+
+
+);
+
