@@ -1,5 +1,7 @@
 
 const getUser = async (req, res) => {
+
+    const { id } = req.params;
     res.json({
         message: "buscar usuario"
     });
@@ -8,6 +10,9 @@ const getUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
+    const { id } = req.params;
+    const { nome } = req.body;
+
     res.json({
         message: "atualizar usuario"
     });
