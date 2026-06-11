@@ -32,7 +32,7 @@ export default function Messages() {
           <div 
             key={chat.id} 
             // CLIQUE NO CARD: Leva para a tela de chat individual
-            onClick={() => navigate("/chat")}
+            onClick={() => navigate(`/chat/${chat.id}`)}
             className="bg-white border border-slate-100 rounded-2xl p-4 flex items-center justify-between shadow-sm shadow-slate-100/50 hover:border-slate-300 hover:shadow-md transition cursor-pointer"
           >
             <div className="flex gap-3.5 items-center">
