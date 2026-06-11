@@ -1,5 +1,8 @@
 import { db } from "../Config/db.js";
 
+// Retorna uma visão resumida dos usuários cadastrados.
+// Utilizado principalmente para listagens, evitando expor
+// informações mais sensíveis ou desnecessárias do perfil.
 export const getAllUsers = (req, res) => {
 
     db.query(
@@ -30,6 +33,8 @@ export const getAllUsers = (req, res) => {
 
 };
 
+// Retorna os dados completos de um usuário específico.
+// Essa rota funciona como consulta de perfil individual.
 export const getUserById = (req, res) => {
 
     const { id } = req.params;
@@ -61,6 +66,8 @@ export const getUserById = (req, res) => {
                 });
             }
 
+            // Garante uma resposta clara quando o ID informado
+            // não corresponde a nenhum usuário cadastrado.
             if (results.length === 0) {
                 return res.status(404).json({
                     message: "Usuário não encontrado"
@@ -74,6 +81,9 @@ export const getUserById = (req, res) => {
 
 };
 
+// Atualiza informações complementares do perfil.
+// Os campos principais de autenticação permanecem isolados
+// das edições comuns realizadas pelo usuário.
 export const updateUser = (req, res) => {
 
     const { id } = req.params;
@@ -124,6 +134,9 @@ export const updateUser = (req, res) => {
 
 };
 
+// Remove permanentemente um usuário do sistema.
+// A validação de affectedRows evita informar sucesso
+// quando o registro não existe no banco.
 // 🆕 DELETE USER (NOVO)
 export const deleteUser = (req, res) => {
 

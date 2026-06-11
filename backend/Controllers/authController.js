@@ -2,7 +2,10 @@ import { db } from "../Config/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+// Responsável pelo cadastro de novos usuários e pelas validações
+// básicas necessárias antes da persistência dos dados
 export const register = async (req, res) => {
+
 
     try {
 
@@ -19,6 +22,8 @@ export const register = async (req, res) => {
             });
         }
 
+        // Garante que apenas os tipos de usuário previstos
+        // pela modelagem do sistema possam ser cadastrados
         if (
             user_type !== "freelancer" &&
             user_type !== "company"
@@ -41,12 +46,16 @@ export const register = async (req, res) => {
                     });
                 }
 
+                // Evita duplicidade de contas utilizando o email
+                // como identificador único de autenticação
                 if (results.length > 0) {
                     return res.status(400).json({
                         message: "Email já cadastrado"
                     });
                 }
 
+                // A senha nunca é armazenada em texto puro.
+                // Apenas seu hash criptográfico é persistido no banco
                 const passwordHash = await bcrypt.hash(password, 10);
 
                 db.query(
@@ -99,6 +108,8 @@ export const register = async (req, res) => {
 
 };
 
+// Realiza a autenticação do usuário e gera o token JWT
+// utilizado para acessar rotas protegidas da aplicação
 export const login = (req, res) => {
 
     try {
@@ -125,6 +136,8 @@ export const login = (req, res) => {
                     });
                 }
 
+                // Não informa qual dado está incorreto para evitar
+                // exposição desnecessária de informações da conta
                 if (results.length === 0) {
                     return res.status(401).json({
                         message: "Email ou senha inválidos"
@@ -133,6 +146,7 @@ export const login = (req, res) => {
 
                 const user = results[0];
 
+                // Compara a senha enviada com o hash armazenado
                 const validPassword = await bcrypt.compare(
                     password,
                     user.password_hash
@@ -144,6 +158,12 @@ export const login = (req, res) => {
                     });
                 }
 
+                // O token carrega apenas informações essenciais
+                // para identificação e autorização do usuário
+                const token = jwt.sign(
+                    { id: user.id, email: user.email, user_type: user.user_type },
+                    process.env.JWT_SECRET,
+                    { expiresIn: "7d" }
                 const token = jwt.sign(
                     {
                         id: user.id,
@@ -181,6 +201,8 @@ export const login = (req, res) => {
 
 };
 
+// Retorna os dados do usuário autenticado utilizando
+// a identificação extraída do token JWT validado pelo middleware
 export const me = (req, res) => {
 
     try {

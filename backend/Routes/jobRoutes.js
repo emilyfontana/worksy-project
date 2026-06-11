@@ -12,22 +12,26 @@ import authMiddleware from "../Middleware/authMiddleware.js";
 
 const router = express.Router();
 
+// Rotas responsáveis pelo gerenciamento de vagas
 router.get("/", getAllJobs);
 
 router.get("/:id", getJobById);
 
+// Requer autenticação
 router.post(
     "/",
     authMiddleware,
     createJob
 );
 
+// Requer autenticação
 router.put(
     "/:id",
     authMiddleware,
     updateJob
 );
 
+// Requer autenticação
 router.delete(
     "/:id",
     authMiddleware,

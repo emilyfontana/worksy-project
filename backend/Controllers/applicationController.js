@@ -1,5 +1,8 @@
 import { db } from "../Config/db.js";
 
+// Cria uma candidatura já com status inicial "pending".
+// A regra de negócio que impede candidaturas duplicadas é garantida pelo banco
+// através da constraint UNIQUE(job_id, freelancer_id)
 export const createApplication = (req, res) => {
 
     const {
@@ -51,6 +54,8 @@ export const createApplication = (req, res) => {
 
 };
 
+// Retorna todas as candidaturas cadastradas,
+// priorizando as mais recentes para facilitar consultas administrativas
 export const getAllApplications = (req, res) => {
 
     db.query(
@@ -76,6 +81,8 @@ export const getAllApplications = (req, res) => {
 
 };
 
+// Recupera todas as candidaturas vinculadas a uma vaga específica
+// Utilizado principalmente para que empresas visualizem seus candidatos
 export const getApplicationsByJob = (req, res) => {
 
     const { jobId } = req.params;
@@ -104,6 +111,8 @@ export const getApplicationsByJob = (req, res) => {
 
 };
 
+// Atualiza o ciclo de vida da candidatura,
+// permitindo sua aprovação, rejeição ou manutenção como pendente
 export const updateApplicationStatus = (req, res) => {
 
     const { id } = req.params;

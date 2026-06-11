@@ -3,6 +3,9 @@ import { db } from "../Config/db.js";
 
 let io;
 
+// Configura o canal de comunicação em tempo real utilizado pelos chats
+export const initSocket = (server) => {
+
 export const initSocket = (server) => {
     io = new Server(server, {
         cors: {
@@ -14,11 +17,24 @@ export const initSocket = (server) => {
 
         console.log("Usuário conectado:", socket.id);
 
+        // Associa o usuário à sala do chat para que ele receba apenas
+        // eventos relacionados àquela conversa específica
         // entrar na sala do chat
         socket.on("join_chat", (chatId) => {
             socket.join(chatId);
             console.log(`Entrou no chat: ${chatId}`);
         });
+
+        // Fluxo principal do chat:
+        // recebe a mensagem do cliente, persiste no banco
+        // e replica o evento para todos os participantes da sala
+        socket.on("send_message", (data) => {
+
+            const {
+                chat_id,
+                sender_id,
+                content
+            } = data;
 
         // enviar mensagem
         socket.on("send_message", (data) => {
@@ -38,6 +54,8 @@ export const initSocket = (server) => {
                         return;
                     }
 
+                    // Monta o objeto que será enviado em tempo real,
+                    // mantendo consistência entre banco e frontend
                     const message = {
                         id: result.insertId,
                         chat_id,
@@ -46,6 +64,22 @@ export const initSocket = (server) => {
                         created_at: new Date()
                     };
 
+                    // Notifica instantaneamente todos os usuários conectados
+                    // à mesma conversa, sem necessidade de nova requisição HTTP
+                    io.to(chat_id).emit(
+                        "receive_message",
+                        message
+                    );
+                }
+            );
+        });
+
+        // Permite monitorar conexões encerradas e futuras métricas de presença
+        socket.on("disconnect", () => {
+            console.log(
+                "Usuário desconectado:",
+                socket.id
+            );
                     // 2. enviar para todos do chat
                     io.to(chat_id).emit("receive_message", message);
                 }

@@ -1,5 +1,7 @@
 import { db } from "../Config/db.js";
 
+// Cria uma nova vaga vinculada a uma empresa.
+// Toda vaga nasce com status inicial "open", indicando que está disponível para candidaturas
 export const createJob = (req, res) => {
 
     const {
@@ -56,6 +58,8 @@ export const createJob = (req, res) => {
 
 };
 
+// Retorna todas as vagas cadastradas,
+// priorizando as mais recentes para exibição no marketplace
 export const getAllJobs = (req, res) => {
 
     db.query(
@@ -81,6 +85,7 @@ export const getAllJobs = (req, res) => {
 
 };
 
+// Recupera os detalhes completos de uma vaga específica
 export const getJobById = (req, res) => {
 
     const { id } = req.params;
@@ -115,6 +120,8 @@ export const getJobById = (req, res) => {
 
 };
 
+// Permite alterar tanto as informações da vaga
+// quanto seu estado dentro do fluxo de contratação
 export const updateJob = (req, res) => {
 
     const { id } = req.params;
@@ -171,6 +178,8 @@ export const updateJob = (req, res) => {
 
 };
 
+// Remove permanentemente a vaga
+// Relacionamentos configurados com ON DELETE CASCADE serão removidos automaticamente
 export const deleteJob = (req, res) => {
 
     const { id } = req.params;
