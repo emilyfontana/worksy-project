@@ -48,7 +48,7 @@ out
 # VuePress
 .vuepress/dist
 .temp
-
+.env
 # VitePress
 **/.vitepress/dist
 **/.vitepress/cache
