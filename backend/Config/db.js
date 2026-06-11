@@ -6,3 +6,11 @@ export const db = mysql.createConnection({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME
 });
+import mysql from "mysql2";
+
+export const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "Senha",
+    database: "worksy"
+});
