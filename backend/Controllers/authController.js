@@ -164,6 +164,16 @@ export const login = (req, res) => {
                     { id: user.id, email: user.email, user_type: user.user_type },
                     process.env.JWT_SECRET,
                     { expiresIn: "7d" }
+                const token = jwt.sign(
+                    {
+                        id: user.id,
+                        email: user.email,
+                        user_type: user.user_type
+                    },
+                    "worksy$2026#secure@jwt!key",
+                    {
+                        expiresIn: "7d"
+                    }
                 );
 
                 return res.status(200).json({

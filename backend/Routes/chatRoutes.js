@@ -25,5 +25,13 @@ router.get(
     authMiddleware,
     getChatById
 );
+// criar chat
+router.post("/", authMiddleware, createChat);
+
+// chats do usuário
+router.get("/user/:userId", authMiddleware, getChatsByUser);
+
+// chat específico
+router.get("/:id", authMiddleware, getChatById);
 
 export default router;

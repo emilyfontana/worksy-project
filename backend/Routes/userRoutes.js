@@ -20,6 +20,8 @@ router.get("/:id", getUserById);
 router.put("/:id", authMiddleware, updateUser);
 
 // Requer autenticação
+router.put("/:id", authMiddleware, updateUser);
+
 router.delete("/:id", authMiddleware, deleteUser);
 
 export default router;

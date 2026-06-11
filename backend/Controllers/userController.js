@@ -137,6 +137,7 @@ export const updateUser = (req, res) => {
 // Remove permanentemente um usuário do sistema.
 // A validação de affectedRows evita informar sucesso
 // quando o registro não existe no banco.
+// 🆕 DELETE USER (NOVO)
 export const deleteUser = (req, res) => {
 
     const { id } = req.params;
