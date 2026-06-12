@@ -5,6 +5,7 @@ import DrawerMenu from "./DrawerMenu"
 import { BottomNav } from "./BottomNav"
 import { getAllJobs, getLocalUser } from "../Services/api"
 
+
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [jobs, setJobs] = useState([])

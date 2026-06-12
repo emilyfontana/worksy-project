@@ -1,16 +1,17 @@
 import { X, User, Heart, FileText, Wallet, Users, Settings, LogOut } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function DrawerMenu({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    // Mudamos de 'fixed' para 'absolute' para ele respeitar a div mãe (o celular)
+    // 'absolute' garante que ele respeite os limites do container do celular (max-w-md relative)
     <div className="absolute inset-0 z-50 flex">
       
-      {/* Backdrop de fundo escurecido - também 'absolute' */}
+      {/* Backdrop de fundo escurecido com fechamento ao clicar fora */}
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Conteúdo do Drawer - 'absolute' fixado à esquerda da tela do celular */}
+      {/* Conteúdo do Drawer - fixado perfeitamente na esquerda do celular simulado */}
       <div className="absolute left-0 top-0 bottom-0 w-[290px] max-w-[85vw] bg-white h-full shadow-2xl flex flex-col animate-slide-in z-10">
         
         {/* Topo Verde com dados do Perfil */}
@@ -33,25 +34,26 @@ export default function DrawerMenu({ isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Itens do Menu */}
+        {/* Itens do Menu com Rotas e Fechamento Automático */}
         <div className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-          <MenuLink icon={<User size={18}/>} label="Meu Perfil" />
-          <MenuLink icon={<Heart size={18}/>} label="Vagas Favoritas" badge={1} />
-          <MenuLink icon={<FileText size={18}/>} label="Candidaturas" badge={7} />
-          <MenuLink icon={<Wallet size={18}/>} label="Pagamentos" />
-          <MenuLink icon={<Users size={18}/>} label="Funcionários" badge={4} />
+          <MenuLink to="/profile" icon={<User size={18}/>} label="Meu Perfil" onClick={onClose} />
+          <MenuLink to="/favorites" icon={<Heart size={18}/>} label="Vagas Favoritas" badge={1} onClick={onClose} />
+          <MenuLink to="/applications" icon={<FileText size={18}/>} label="Candidaturas" badge={7} onClick={onClose} />
+          <MenuLink to="/payments" icon={<Wallet size={18}/>} label="Pagamentos" onClick={onClose} />
+          <MenuLink to="/employees" icon={<Users size={18}/>} label="Funcionários" badge={4} onClick={onClose} />
           
           <div className="border-t border-slate-100 my-4 pt-4" />
           
-          <MenuLink icon={<Settings size={18}/>} label="Configurações" variant="neutral" />
-          <MenuLink icon={<LogOut size={18}/>} label="Sair" variant="danger" />
+          <MenuLink to="/settings" icon={<Settings size={18}/>} label="Configurações" variant="neutral" onClick={onClose} />
+          <MenuLink to="/" icon={<LogOut size={18}/>} label="Sair" variant="danger" onClick={onClose} />
         </div>
       </div>
     </div>
   );
 }
 
-function MenuLink({ icon, label, badge, variant = "default" }) {
+// Componente auxiliar MenuLink ajustado para usar navegação real
+function MenuLink({ to, icon, label, badge, variant = "default", onClick }) {
   const textColors = {
     default: "text-[#1a233d] hover:bg-slate-50",
     neutral: "text-slate-400 hover:bg-slate-50",
@@ -65,7 +67,11 @@ function MenuLink({ icon, label, badge, variant = "default" }) {
   };
 
   return (
-    <button className={`w-full flex items-center justify-between p-3.5 rounded-xl transition font-bold text-sm ${textColors[variant]}`}>
+    <Link 
+      to={to} 
+      onClick={onClick}
+      className={`w-full flex items-center justify-between p-3.5 rounded-xl transition font-bold text-sm ${textColors[variant]}`}
+    >
       <div className="flex items-center gap-3.5">
         <span className={iconColors[variant]}>{icon}</span>
         <span>{label}</span>
@@ -75,6 +81,6 @@ function MenuLink({ icon, label, badge, variant = "default" }) {
           {badge}
         </span>
       )}
-    </button>
+    </Link>
   );
 }

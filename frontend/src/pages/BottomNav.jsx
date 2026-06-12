@@ -1,30 +1,65 @@
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Home, Search, MessageSquare, Briefcase } from "lucide-react";
 
-export function BottomNav({ active }) {
+export function BottomNav() {
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  // Verifica em tempo real se o usuário está navegando nas telas de empresa
+  const isCompany = currentPath.startsWith("/company");
+
+  // Configuração dos botões baseada no tipo de usuário logado
+  const navItems = isCompany
+    ? [
+        { path: "/company", label: "Início", icon: <Home size={20} />, badge: false },
+        { path: "/company/search", label: "Busca", icon: <Search size={20} />, badge: false },
+        { path: "/company/messages", label: "Chat", icon: <MessageSquare size={20} />, badge: 3 },
+        { path: "/company/my-jobs", label: "Vagas", icon: <Briefcase size={20} />, badge: false },
+      ]
+    : [
+        { path: "/home", label: "Início", icon: <Home size={20} />, badge: false },
+        { path: "/search", label: "Busca", icon: <Search size={20} />, badge: false },
+        { path: "/messages", label: "Chat", icon: <MessageSquare size={20} />, badge: 3 },
+        { path: "/applications", label: "Vagas", icon: <Briefcase size={20} />, badge: false },
+      ];
+
   return (
-    // Altere a div mãe do seu arquivo BottomNav para isso:
-<div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-slate-100 px-6 py-3 flex justify-between items-center z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
-      {/* Botão Início vai para /home */}
-      <Link to="/Home" className={`flex flex-col items-center gap-1 text-[10px] font-bold ${active === 'inicio' ? 'text-[#2ecc71]' : 'text-slate-300'}`}>
-        <span className="text-lg">🏠</span>Início
-        {active === 'inicio' && <span className="w-1 h-1 bg-[#2ecc71] rounded-full"></span>}
-      </Link>
+    <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-100 py-2.5 px-6 flex justify-between items-center z-45 max-w-md mx-auto shadow-[0_-4px_12px_rgba(0,0,0,0.03)] rounded-t-3xl">
+      {navItems.map((item) => {
+        // Define se este botão específico está ativo na URL atual
+        const isActive = currentPath === item.path;
 
-      <Link to="/Search" className={`flex flex-col items-center gap-1 text-[10px] font-bold ${active === 'busca' ? 'text-[#2ecc71]' : 'text-slate-300'}`}>
-        <span className="text-lg">🔍</span>Busca
-        {active === 'busca' && <span className="w-1 h-1 bg-[#2ecc71] rounded-full"></span>}
-      </Link>
+        return (
+          <Link
+            key={item.path}
+            to={item.path}
+            className={`flex flex-col items-center gap-0.5 relative transition-all duration-200 ${
+              isActive ? "text-[#2ecc71] scale-105" : "text-slate-400 hover:text-slate-600"
+            }`}
+          >
+            {/* Ícone com Badge de Notificação se houver */}
+            <div className="relative p-1">
+              {item.icon}
+              {item.badge && (
+                <span className="absolute -top-1 -right-1.5 bg-red-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white animate-pulse">
+                  {item.badge}
+                </span>
+              )}
+            </div>
 
-      <Link to="/Messages" className={`flex flex-col items-center gap-1 text-[10px] font-bold relative ${active === 'chat' ? 'text-[#2ecc71]' : 'text-slate-300'}`}>
-        <span className="text-lg">💬</span>Chat
-        <span className="absolute -top-1 right-1 bg-red-500 text-white text-[8px] px-1 rounded-full border border-white">3</span>
-        {active === 'chat' && <span className="w-1 h-1 bg-[#2ecc71] rounded-full"></span>}
-      </Link>
+            {/* Label de texto */}
+            <span className="text-[10px] font-extrabold tracking-tight">
+              {item.label}
+            </span>
 
-      <Link to="/Applications" className={`flex flex-col items-center gap-1 text-[10px] font-bold ${active === 'candidaturas' ? 'text-[#2ecc71]' : 'text-slate-300'}`}>
-        <span className="text-lg">📋</span>Candidaturas
-        {active === 'candidaturas' && <span className="w-1 h-1 bg-[#2ecc71] rounded-full"></span>}
-      </Link>
+            {/* Indicador visual de bola ativa embaixo do ícone */}
+            {isActive && (
+              <span className="w-1 h-1 bg-[#2ecc71] rounded-full mt-0.5 animate-fade-in" />
+            )}
+          </Link>
+        );
+      })}
     </div>
   );
 }
