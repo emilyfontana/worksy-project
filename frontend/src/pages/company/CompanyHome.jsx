@@ -1,44 +1,60 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Plus, Menu, Users, Eye, Briefcase } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { getJobsByCompany, getLocalUser } from "../../Services/api";
 
 export default function CompanyHome({ onOpenDrawer }) {
   const [activeTab, setActiveTab] = useState("Todas");
+  const [vagas, setVagas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const tabs = [
-    { id: "Todas", label: "Todas", count: 2 },
-    { id: "Ativas", label: "Ativas", count: 2, color: "bg-emerald-50 text-emerald-600" },
-    { id: "Pausadas", label: "Pausadas", count: 0, color: "bg-amber-50 text-amber-600" },
-    { id: "Encerradas", label: "Encerradas", count: 0, color: "bg-slate-50 text-slate-500" },
-  ];
+  // busca as vagas reais da empresa logada
+  useEffect(() => {
+    const fetchVagas = async () => {
+      const user = getLocalUser();
 
-  const companyHomeData = [
-    {
-      id: 1,
-      titulo: "Desenvolvedor React Senior",
-      categoria: "Frontend",
-      status: "Ativas",
-      candidatos: 12,
-      visualizacoes: 89,
-      salario: "R$ 8.000 - 12.000",
-      data: "Criado 15 Mai",
-    },
-    {
-      id: 2,
-      titulo: "Designer UI/UX Mobile",
-      categoria: "Design",
-      status: "Ativas",
-      candidatos: 8,
-      visualizacoes: 42,
-      salario: "R$ 5.000 - 7.000",
-      data: "Criado 10 Mai",
-    }
+      if (!user) {
+        setError("usuario nao autenticado");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const jobs = await getJobsByCompany(user.id);
+        setVagas(jobs);
+      } catch (err) {
+        setError(err.message || "erro ao buscar vagas");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVagas();
+  }, []);
+
+  // mapeia o status do banco para o status usado nas abas
+  const statusMap = {
+    open: "Ativas",
+    paused: "Pausadas",
+    closed: "Encerradas"
+  };
+
+  const ativas = vagas.filter(v => statusMap[v.job_status] === "Ativas").length;
+  const pausadas = vagas.filter(v => statusMap[v.job_status] === "Pausadas").length;
+  const encerradas = vagas.filter(v => statusMap[v.job_status] === "Encerradas").length;
+
+  const tabs = [
+    { id: "Todas", label: "Todas", count: vagas.length },
+    { id: "Ativas", label: "Ativas", count: ativas, color: "bg-emerald-50 text-emerald-600" },
+    { id: "Pausadas", label: "Pausadas", count: pausadas, color: "bg-amber-50 text-amber-600" },
+    { id: "Encerradas", label: "Encerradas", count: encerradas, color: "bg-slate-50 text-slate-500" },
   ];
 
   const vagasFiltradas = activeTab === "Todas" 
-    ? companyHomeData 
-    : companyHomeData.filter(v => v.status === activeTab);
+    ? vagas 
+    : vagas.filter(v => statusMap[v.job_status] === activeTab);
 
   return (
     <div className="flex flex-col min-h-screen bg-[#f8fafc] max-w-md mx-auto relative font-sans pb-24">
@@ -97,24 +113,34 @@ export default function CompanyHome({ onOpenDrawer }) {
 
       {/* Listagem de Vagas (Rolagem Vertical Fluida) */}
       <div className="flex-1 px-4 py-2 space-y-3 overflow-y-auto">
-        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide px-1">
-          {vagasFiltradas.length} {vagasFiltradas.length === 1 ? 'vaga encontrada' : 'vagas encontradas'}
-        </p>
-        
-        {vagasFiltradas.map((vaga) => (
+        {loading && (
+          <p className="text-xs font-bold text-slate-400 text-center py-6">carregando vagas...</p>
+        )}
+
+        {error && (
+          <p className="text-xs font-bold text-red-500 text-center py-6">{error}</p>
+        )}
+
+        {!loading && !error && (
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide px-1">
+            {vagasFiltradas.length} {vagasFiltradas.length === 1 ? 'vaga encontrada' : 'vagas encontradas'}
+          </p>
+        )}
+
+        {!loading && !error && vagasFiltradas.map((vaga) => (
           <div 
             key={vaga.id} 
             className="bg-white border border-slate-100 p-5 rounded-3xl shadow-sm flex flex-col justify-between hover:border-slate-200 transition"
           >
             <div>
               <div className="flex items-start justify-between mb-1">
-                <h3 className="font-black text-sm text-[#1a233d] pr-2 leading-snug">{vaga.titulo}</h3>
+                <h3 className="font-black text-sm text-[#1a233d] pr-2 leading-snug">{vaga.title}</h3>
                 <span className="text-[9px] font-bold bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full whitespace-nowrap flex items-center gap-1">
-                  ● Ativa
+                  ● {statusMap[vaga.job_status] === "Ativas" ? "Ativa" : statusMap[vaga.job_status] === "Pausadas" ? "Pausada" : "Encerrada"}
                 </span>
               </div>
               <p className="text-[11px] font-bold text-slate-400 mb-4 flex items-center gap-1">
-                <Briefcase size={12} /> {vaga.categoria}
+                <Briefcase size={12} /> {vaga.category}
               </p>
 
               {/* Bloco de Métricas Clicável que leva para os candidatos */}
@@ -126,26 +152,28 @@ export default function CompanyHome({ onOpenDrawer }) {
                   <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1">
                     <Users size={10} className="text-emerald-500" /> Candidatos
                   </span>
-                  <span className="text-base font-black text-emerald-500 mt-0.5">{vaga.candidatos}</span>
+                  <span className="text-base font-black text-emerald-500 mt-0.5">{vaga.candidatos ?? 0}</span>
                 </div>
                 <div className="border-l border-slate-200/80 pl-3 flex flex-col">
                   <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1">
                     <Eye size={10} className="text-blue-500" /> Visualizações
                   </span>
-                  <span className="text-base font-black text-[#1a233d] mt-0.5">{vaga.visualizacoes}</span>
+                  <span className="text-base font-black text-[#1a233d] mt-0.5">{vaga.views ?? 0}</span>
                 </div>
               </div>
             </div>
 
             {/* Rodapé do Card */}
             <div className="flex items-center justify-between border-t border-slate-50 pt-3 mt-1">
-              <span className="text-xs font-black text-[#1a233d]">{vaga.salario}<span className="text-[10px] font-normal text-slate-400">/mês</span></span>
-              <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">{vaga.data}</span>
+              <span className="text-xs font-black text-[#1a233d]">R$ {vaga.budget}<span className="text-[10px] font-normal text-slate-400">/mês</span></span>
+              <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                {vaga.created_at ? new Date(vaga.created_at).toLocaleDateString('pt-BR') : ''}
+              </span>
             </div>
           </div>
         ))}
 
-        {vagasFiltradas.length === 0 && (
+        {!loading && !error && vagasFiltradas.length === 0 && (
           <div className="text-center py-12 bg-white rounded-3xl border border-slate-100">
             <p className="text-xs font-bold text-slate-400">Nenhuma vaga nesta categoria.</p>
           </div>

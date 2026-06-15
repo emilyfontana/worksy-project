@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { ChevronLeft, Plus, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { createJob, getLocalUser } from "../../Services/api";
 
 export default function CreateJob() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     titulo: "", categoria: "", modalidade: "", localizacao: "",
     salarioMin: "", salarioMax: "", salarioNegocivel: false,
@@ -21,6 +24,43 @@ export default function CreateJob() {
     if (currentTech.trim() && !formData.tecnologias.includes(currentTech.trim())) {
       setFormData({ ...formData, tecnologias: [...formData.tecnologias, currentTech.trim()] });
       setCurrentTech("");
+    }
+  };
+
+  // envia a vaga para o backend
+  const handlePublish = async () => {
+    const user = getLocalUser();
+
+    if (!user) {
+      setError("usuario nao autenticado");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      // monta o orcamento a partir do salario minimo informado
+      const budget = formData.salarioMin
+        ? Number(formData.salarioMin)
+        : (formData.salarioMax ? Number(formData.salarioMax) : 0);
+
+      await createJob({
+        company_id: user.id,
+        title: formData.titulo,
+        job_description: formData.descricao,
+        category: formData.categoria,
+        budget,
+        job_location: formData.localizacao,
+        urgent: formData.urgente
+      });
+
+      alert("Vaga publicada com sucesso!");
+      navigate("/company/my-jobs");
+    } catch (err) {
+      setError(err.message || "erro ao publicar vaga");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -125,6 +165,13 @@ export default function CreateJob() {
         )}
       </div>
 
+      {/* Mensagem de erro */}
+      {error && (
+        <div className="px-6 pb-2">
+          <p className="text-xs font-bold text-red-500 text-center">{error}</p>
+        </div>
+      )}
+
       {/* Botões Fixos de Ação */}
       <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-slate-50 flex justify-center">
         {step < 3 ? (
@@ -136,13 +183,11 @@ export default function CreateJob() {
           </button>
         ) : (
           <button 
-            onClick={() => {
-              alert("Vaga publicada com sucesso!");
-              navigate("/company/my-jobs"); // Volta para a lista de vagas da empresa
-            }}
-            className="w-full bg-[#1a233d] hover:bg-[#111728] text-white py-4 rounded-2xl font-black text-sm transition flex items-center justify-center gap-2 shadow-lg"
+            onClick={handlePublish}
+            disabled={loading}
+            className="w-full bg-[#1a233d] hover:bg-[#111728] text-white py-4 rounded-2xl font-black text-sm transition flex items-center justify-center gap-2 shadow-lg disabled:opacity-60"
           >
-            ✓ Publicar Vaga
+            {loading ? "Publicando..." : "✓ Publicar Vaga"}
           </button>
         )}
       </div>

@@ -66,3 +66,11 @@ export const getChatsByUser = async (userId) => request('GET', `/chats/user/${us
 
 // mensagens
 export const getMessagesByChat = async (chatId) => request('GET', `/messages/chat/${chatId}`)
+
+export const deleteJob = async (id) => request('DELETE', `/jobs/${id}`)
+
+// vagas da empresa logada (filtra no front pois o backend nao tem endpoint especifico)
+export const getJobsByCompany = async (companyId) => {
+  const jobs = await getAllJobs()
+  return jobs.filter(job => job.company_id === companyId)
+}
