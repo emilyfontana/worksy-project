@@ -36,8 +36,6 @@ app.get("/", (req, res) => {
 const server = http.createServer(app);
 
 // Inicializa a comunicação em tempo real
-const server = http.createServer(app);
-
 initSocket(server);
 
 const PORT = 3000;

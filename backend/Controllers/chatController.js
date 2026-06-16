@@ -2,7 +2,6 @@ import { db } from "../Config/db.js";
 
 // Cria um canal de conversa entre empresa e freelancer.
 // Caso já exista um chat para a mesma vaga, reutiliza o registro existente
-// Criar chat (ou retornar se já existir)
 export const createChat = (req, res) => {
     const {
         job_id,
@@ -11,7 +10,6 @@ export const createChat = (req, res) => {
     } = req.body;
 
     // Evita a criação de conversas duplicadas para a mesma negociação
-    // 1. verificar se já existe chat
     db.query(
         `
         SELECT * FROM chats
@@ -29,13 +27,11 @@ export const createChat = (req, res) => {
 
             // Caso o relacionamento já exista, retorna o chat atual
             // em vez de criar um novo registro
-            // se já existe, retorna ele
             if (results.length > 0) {
                 return res.status(200).json(results[0]);
             }
 
             // Inicia uma nova conversa vinculada à vaga
-            // 2. cria chat
             db.query(
                 `
                 INSERT INTO chats
@@ -62,7 +58,6 @@ export const createChat = (req, res) => {
 
 // Retorna todas as conversas nas quais o usuário participa,
 // independentemente de atuar como empresa ou freelancer
-// Buscar chats por usuário
 export const getChatsByUser = (req, res) => {
     const { userId } = req.params;
 
@@ -88,7 +83,6 @@ export const getChatsByUser = (req, res) => {
 
 // Recupera uma conversa específica para exibição de histórico
 // e carregamento das mensagens associadas
-// Buscar chat por ID
 export const getChatById = (req, res) => {
     const { id } = req.params;
 

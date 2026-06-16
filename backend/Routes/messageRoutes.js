@@ -22,10 +22,5 @@ router.get(
     authMiddleware,
     getMessageById
 );
-// mensagens de um chat
-router.get("/chat/:chatId", authMiddleware, getMessagesByChat);
-
-// mensagem específica
-router.get("/:id", authMiddleware, getMessageById);
 
 export default router;
