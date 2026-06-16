@@ -1,3 +1,14 @@
+Projeto acadêmico desenvolvido no 5º período do curso de Ciência da Computação na PUCPR, na disciplina de Experiência Criativa.
+
+Integrantes:
+
+
+Cecilia Lucchesi Mardegan
+Emily Pontes Fontana
+Erick Maestri de Souza
+Julia Machado Kociolek
+Sophia Post Ploposki
+
 # Worksy
 
 Aplicação web fullstack desenvolvida por estudantes do 5º período de Ciência da Computação como projeto da disciplina **Experiência Criativa**. A plataforma conecta freelancers a empresas, permitindo a publicação de vagas, candidaturas, gerenciamento de perfis e comunicação em tempo real entre as partes.
@@ -288,4 +299,3 @@ worksy-project/
 
 ---
 
-Projeto acadêmico desenvolvido no 5º período de Ciência da Computação — Experiência Criativa.
