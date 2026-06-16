@@ -283,6 +283,7 @@ worksy-project/
 │   │   ├── Services/
 │   │   │   └── api.js             # camada de comunicação http
 │   │   ├── pages/
+│   │   │   ├── company/ # pasta com abas jsx exclusivas da visão da empresa 
 │   │   │   ├── Home.jsx
 │   │   │   ├── Login.jsx
 │   │   │   ├── Profile.jsx
