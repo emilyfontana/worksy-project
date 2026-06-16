@@ -3,11 +3,11 @@ Projeto acadêmico desenvolvido no 5º período do curso de Ciência da Computa�
 Integrantes:
 
 
-Cecilia Lucchesi Mardegan
-Emily Pontes Fontana
-Erick Maestri de Souza
-Julia Machado Kociolek
-Sophia Post Ploposki
+* Cecilia Lucchesi Mardegan
+* Emily Pontes Fontana
+* Erick Maestri de Souza
+* Julia Machado Kociolek
+* Sophia Post Ploposki
 
 # Worksy
 
