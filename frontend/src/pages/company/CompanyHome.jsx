@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Plus, Menu, Users, Eye, Briefcase } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getJobsByCompany, getLocalUser } from "../../Services/api";
+import DrawerMenu from "../DrawerMenu";
+
 
 export default function CompanyHome({ onOpenDrawer }) {
   const [activeTab, setActiveTab] = useState("Todas");
   const [vagas, setVagas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
 
   // busca as vagas reais da empresa logada
@@ -73,10 +76,10 @@ export default function CompanyHome({ onOpenDrawer }) {
             Criar Vaga
           </button>
           
-          <button 
-            onClick={onOpenDrawer} 
+          <button
+            onClick={() => setDrawerOpen(true)}
             className="p-2 text-slate-600 bg-slate-50 rounded-full hover:bg-slate-100 transition"
-          >
+            >
             <Menu size={20} />
           </button>
         </div>
@@ -179,6 +182,7 @@ export default function CompanyHome({ onOpenDrawer }) {
           </div>
         )}
       </div>
+      <DrawerMenu isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
     </div>
   );

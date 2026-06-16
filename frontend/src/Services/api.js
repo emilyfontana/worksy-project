@@ -25,8 +25,10 @@ const request = async (method, path, body = null) => {
 // auth
 export const login = async (email, password) => {
   const data = await request('POST', '/auth/login', { email, password })
+
   localStorage.setItem('token', data.token)
   localStorage.setItem('user', JSON.stringify(data.user))
+
   return data
 }
 export const register = async (userData) => request('POST', '/auth/register', userData)
@@ -67,10 +69,21 @@ export const getChatsByUser = async (userId) => request('GET', `/chats/user/${us
 // mensagens
 export const getMessagesByChat = async (chatId) => request('GET', `/messages/chat/${chatId}`)
 
-export const deleteJob = async (id) => request('DELETE', `/jobs/${id}`)
-
+export const sendMessage = async (
+  chatId,
+  senderId,
+  content
+) =>
+  request("POST", "/messages", {
+    chat_id: chatId,
+    sender_id: senderId,
+    content
+  })
 // vagas da empresa logada (filtra no front pois o backend nao tem endpoint especifico)
 export const getJobsByCompany = async (companyId) => {
-  const jobs = await getAllJobs()
-  return jobs.filter(job => job.company_id === companyId)
-}
+  const jobs = await getAllJobs();
+
+  return jobs.filter(
+    (job) => job.company_id === companyId
+  );
+};

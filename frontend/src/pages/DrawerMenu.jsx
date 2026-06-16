@@ -1,7 +1,14 @@
 import { X, User, Heart, FileText, Wallet, Users, Settings, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getLocalUser, logout } from "../Services/api";
+import { useNavigate } from "react-router-dom";
+
+
 
 export default function DrawerMenu({ isOpen, onClose }) {
+  const user = getLocalUser();
+  const navigate = useNavigate();
+
   if (!isOpen) return null;
 
   return (
@@ -21,11 +28,11 @@ export default function DrawerMenu({ isOpen, onClose }) {
           </button>
 
           <div className="w-16 h-16 bg-white/20 border-2 border-white/40 rounded-2xl flex items-center justify-center font-black text-xl mb-4">
-            RS
+            {user?.username?.charAt(0).toUpperCase()}
           </div>
 
-          <h3 className="text-lg font-bold leading-tight">Rafael Silva</h3>
-          <p className="text-xs text-emerald-100 opacity-90 mt-0.5">Full Stack Developer</p>
+          <h3 className="text-lg font-bold leading-tight">{user?.username}</h3>
+          <p className="text-xs text-emerald-100 opacity-90 mt-0.5">{user?.user_type}</p>
           
           <div className="flex gap-3 mt-3 text-[11px] font-medium text-emerald-50">
             <span className="flex items-center gap-0.5">⭐ 4.9</span>
@@ -45,7 +52,16 @@ export default function DrawerMenu({ isOpen, onClose }) {
           <div className="border-t border-slate-100 my-4 pt-4" />
           
           <MenuLink to="/settings" icon={<Settings size={18}/>} label="Configurações" variant="neutral" onClick={onClose} />
-          <MenuLink to="/" icon={<LogOut size={18}/>} label="Sair" variant="danger" onClick={onClose} />
+          <button
+            onClick={() => {
+              logout();
+              navigate("/");
+            }}
+            className="w-full flex items-center gap-3.5 p-3.5 rounded-xl transition font-bold text-sm text-red-400 hover:bg-red-50/50"
+          >
+            <LogOut size={18} />
+            <span>Sair</span>
+          </button>
         </div>
       </div>
     </div>
