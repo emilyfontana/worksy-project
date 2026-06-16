@@ -7,14 +7,15 @@ export function BottomNav() {
   const currentPath = location.pathname;
 
   // Verifica em tempo real se o usuário está navegando nas telas de empresa
-  const isCompany = currentPath.startsWith("/company");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const isCompany = user?.user_type === "company";
 
   // Configuração dos botões baseada no tipo de usuário logado
   const navItems = isCompany
     ? [
         { path: "/company", label: "Início", icon: <Home size={20} />, badge: false },
-        { path: "/company/search", label: "Busca", icon: <Search size={20} />, badge: false },
-        { path: "/company/messages", label: "Chat", icon: <MessageSquare size={20} />, badge: 3 },
+        { path: "/search", label: "Busca", icon: <Search size={20} />, badge: false },
+        { path: "/messages", label: "Chat", icon: <MessageSquare size={20} />, badge: 3 },
         { path: "/company/my-jobs", label: "Vagas", icon: <Briefcase size={20} />, badge: false },
       ]
     : [

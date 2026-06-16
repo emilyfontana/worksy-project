@@ -16,14 +16,26 @@ export default function Login() {
     setError('')
     setLoading(true)
     try {
-      await login(email, password)
-      navigate('/home')
+      const data = await login(email, password)
+
+      console.log("LOGIN:", data)
+
+      if (data.user.user_type === "company") {
+        console.log("EMPRESA")
+        navigate("/company")
+      } else {
+        console.log("FREELANCER")
+        navigate("/home")
+      }
+
     } catch (err) {
       setError(err.message || 'email ou senha incorretos')
     } finally {
       setLoading(false)
     }
   }
+
+  
 
   return (
     <div className="min-h-screen bg-[#1a233d] flex flex-col justify-between font-sans">
