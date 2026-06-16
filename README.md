@@ -9,6 +9,8 @@ Integrantes:
 * Julia Machado Kociolek
 * Sophia Post Ploposki
 
+---
+
 # Worksy
 
 Aplicação web fullstack desenvolvida por estudantes do 5º período de Ciência da Computação como projeto da disciplina **Experiência Criativa**. A plataforma conecta freelancers a empresas, permitindo a publicação de vagas, candidaturas, gerenciamento de perfis e comunicação em tempo real entre as partes.
@@ -161,9 +163,16 @@ npm install
 npm run dev
 ```
 
+> **Nota:** caso o `npm install` retorne erros de conflito, utilize:
+> ```bash
+> npm install --legacy-peer-deps
+> ```
+> O Tailwind CSS v4 pode gerar incompatibilidades de `peerDependencies` com outras bibliotecas. A flag instrui o npm a ignorar esses conflitos de versão e prosseguir com a instalação normalmente.
+
 A aplicação estará disponível em `http://localhost:5173`.
 
 > O frontend realiza as chamadas à API através do prefixo `/api`, que deve ser configurado como proxy no `vite.config.js` apontando para `http://localhost:3000`.
+
 
 ---
 
